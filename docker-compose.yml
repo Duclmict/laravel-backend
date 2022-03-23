@@ -1,0 +1,60 @@
+version: '3.5'
+
+services:
+  api:
+    build:
+      context: '.'
+      dockerfile: Dockerfile
+      args:
+        uid: ${UID}
+        log_folder: ${LOG_FOLDER}
+    container_name: api
+    environment:
+      - APACHE_RUN_USER=#${UID}
+      - APACHE_RUN_GROUP=#${UID}
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 6666:80
+    networks:
+      backend:
+        aliases:
+          - api
+
+  # mysql:
+  #   image: mysql/mysql-server:8.0.22
+  #   platform: linux/x86_64
+  #   container_name: mysql
+  #   volumes:
+  #     - ./mysqldata:/var/lib/mysql
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_DATABASE=api-server
+  #     - MYSQL_USER=lmduc  
+  #     - MYSQL_PASSWORD=12345678
+  #   networks:
+  #     backend:
+  #       aliases:
+  #         - mysql
+  
+  # phpmyadmin:
+  #   depends_on:
+  #     - mysql
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin
+  #   restart: always
+  #   ports:
+  #     - '8080:80'
+  #   environment:
+  #     PMA_HOST: mysql
+  #     MYSQL_ROOT_PASSWORD: root
+  #   networks:
+  #     backend:
+  #       aliases:
+  #         - phpmyadmin
+
+networks:
+  backend:
+    name: network
